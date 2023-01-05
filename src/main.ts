@@ -193,6 +193,12 @@ export default class DiceRoller extends HTMLElement {
                 display: block;
                 font-weight: 700;
                 max-width: max-content;
+                --dice-bg: transparent;
+                --dice-border: 2px solid #fff;
+                --modifier-bg: transparent;
+                --modifier-border: 2px solid transparent;
+                --total-bg: transparent;
+                --total-border: 2px solid transparent;
             }
             .dice {
                 display: flex;
@@ -203,7 +209,7 @@ export default class DiceRoller extends HTMLElement {
             .die {
                 width: ${size * 2}em;
                 height: ${size * 2}em;
-                border: 2px solid #fff;
+                border: var(--dice-border);
                 border-radius: ${size / 2}em;
                 display: flex;
                 align-items: center;
@@ -218,7 +224,8 @@ export default class DiceRoller extends HTMLElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border: 2px solid transparent;
+                border: var(--modifier-border);
+                background: var(--modifier-bg);
                 font-size: ${size}em;
             }
             .modifier:empty {
@@ -235,7 +242,8 @@ export default class DiceRoller extends HTMLElement {
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                border: 2px solid transparent;
+                border: var(--total-border);
+                background: var(--total-bg);
                 position: relative;
             }
             .total h5 {
