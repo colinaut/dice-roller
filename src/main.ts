@@ -78,6 +78,8 @@ export default class DiceRoller extends HTMLElement {
 		} else if (this.total === "lowest") {
 			total = this.minDie();
 		} else if (this.total === "lowest-two") {
+			console.log("lowest-two");
+
 			total = this.twoLowest().reduce(function (accum, curValue) {
 				return accum + curValue;
 			}, 0);
@@ -123,9 +125,11 @@ export default class DiceRoller extends HTMLElement {
 	private twoLowest(): number[] {
 		return this.dieRolls.reduce(
 			(acc, rec) => {
+				console.log(acc);
+
 				return rec < acc[1] ? [acc[1], rec] : rec < acc[0] ? [rec, acc[1]] : acc;
 			},
-			[0, 0]
+			[Infinity, Infinity]
 		);
 	}
 
@@ -207,12 +211,13 @@ export default class DiceRoller extends HTMLElement {
                 font-size: ${size}em;
             }
             .modifier {
-                width: ${size}em;
-                height: ${size * 2}em;
+                width: 1em;
+                height: 2em;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 border: 2px solid transparent;
+                font-size: ${size}em;
             }
             .modifier:empty {
                 display: none;
