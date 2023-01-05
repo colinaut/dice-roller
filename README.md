@@ -11,4 +11,6 @@
 - [ ] add svg for dice shape to match different polyhedrons
 - [ ] highlight the highest dice when BestOf is set
 - [ ] Add die roll history
-- [ ] Add Bonus die for Agon
+- [x] Add Bonus die for Agon
+- [ ] Separate form from dice so that it is two separate components that talk to another
+- [ ] Create better die pool builder UI for Agon

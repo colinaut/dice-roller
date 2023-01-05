@@ -54,7 +54,7 @@ export default class DiceRoller extends HTMLElement {
 	}
 
 	get total(): string {
-		return this.getAttribute("total") || "All Dice";
+		return this.getAttribute("total") || "sum";
 	}
 
 	set total(total: string) {
@@ -66,6 +66,7 @@ export default class DiceRoller extends HTMLElement {
 	}
 
 	private dieRolls: number[] = [];
+	private bonusDieRoll: number = 0;
 	private finalTotal: number = 0;
 
 	public connectedCallback(): void {
@@ -84,18 +85,22 @@ export default class DiceRoller extends HTMLElement {
 			this.dieRolls[i] = this.rollDie(Number(die));
 		});
 		let total: number;
-		if (this.total === "Highest Die") {
+		if (this.total === "highest") {
 			total = this.maxDie();
-		} else if (this.total === "Two Highest Dice") {
+		} else if (this.total === "two highest") {
 			total = this.twoHighest().reduce(function (accum, curValue) {
 				return accum + curValue;
 			}, 0);
-		} else if (this.total === "Lowest Die") {
+		} else if (this.total === "lowest") {
 			total = this.minDie();
 		} else {
 			total = this.dieRolls.reduce(function (accum, curValue) {
 				return accum + curValue;
 			}, 0);
+		}
+		if (this.bonusDie > 0) {
+			this.bonusDieRoll = this.rollDie(this.bonusDie);
+			total += this.bonusDieRoll;
 		}
 		this.finalTotal = total + this.modifier;
 	}
@@ -194,6 +199,7 @@ export default class DiceRoller extends HTMLElement {
 
 	private render() {
 		const modifier: string = this.modifier > 0 ? "+" + this.modifier.toString() : this.modifier < 0 ? this.modifier.toString() : "";
+		const bonusDieText: string = this.bonusDie > 0 ? `+ bonus ${this.bonusDie}d` : "";
 		const css = `
         <style>
             :host {
@@ -243,11 +249,15 @@ export default class DiceRoller extends HTMLElement {
                 order: 2px solid transparent;
                 font-weight: bold;
             }
+            .sub.total {
+                font-size: .7rem;
+                width: 4rem;
+            }
             .total h4 {
                 margin: 0;
             }
             .total span{
-                font-size: 3rem;
+                font-size: 3em;
             }
             .highest {
                 height: 5rem;
@@ -278,7 +288,7 @@ export default class DiceRoller extends HTMLElement {
         </style>
         `;
 
-		let selectArray = ["All Dice", "Highest Die", "Two Highest Dice", "Lowest Die"];
+		let selectArray = ["sum", "highest", "two highest", "lowest"];
 		let selectOptions = "";
 		selectArray.forEach((item) => {
 			if (item === this.total) {
@@ -291,12 +301,12 @@ export default class DiceRoller extends HTMLElement {
 		let bonusDie = "";
 
 		if (this.bonusDie > 0) {
-			bonusDie = `<div class="die bonus">${this.bonusDie}</div>`;
+			bonusDie = `<div class="total sub"><h4>SUBTOTAL</h4><span>${this.finalTotal - this.bonusDieRoll}</span></div><div class="die bonus">${this.bonusDieRoll}</div>`;
 		}
 
 		let html = `
         <div>
-            <h3>${this.dice} ${modifier} ${this.total}</h3>
+            <h3>${this.dice} ${modifier} ${this.total} ${bonusDieText}</h3>
             <form>
                 <div>
                     <label for="dice">Dice:</label>
@@ -307,14 +317,14 @@ export default class DiceRoller extends HTMLElement {
                     <input id="modifier" type="number" name="modifier" value="${this.modifier}">
                 </div>
                 <div>
-                    <label for="bonus-die">Bonus Die:</label>
-                    <input id="bonus-die" type="number" name="bonus-die" value="${this.bonusDie}">
-                </div>
-                <div>
                     <label for="best-of">Total:</label>
                     <select id="best-of" name="best-of">
                         ${selectOptions}
                     </select>
+                </div>
+                <div>
+                    <label for="bonus-die">Bonus Die:</label>
+                    <input id="bonus-die" type="number" name="bonus-die" value="${this.bonusDie}">
                 </div>
                 <button type="submit">Roll Dice</button>
             </form>
