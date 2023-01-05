@@ -62,6 +62,7 @@ export default class DiceRoller extends HTMLElement {
 
 	private rollDice() {
 		this.dieRolls = [];
+		this.bonusDieRoll = 0;
 		this.dice.forEach((die, i) => {
 			this.dieRolls[i] = this.rollDie(Number(die));
 		});
@@ -191,6 +192,7 @@ export default class DiceRoller extends HTMLElement {
                 margin: 1rem 0;
                 display: block;
                 font-weight: 700;
+                max-width: max-content;
             }
             .dice {
                 display: flex;
@@ -269,7 +271,8 @@ export default class DiceRoller extends HTMLElement {
 		let bonusDie = "";
 
 		if (this.bonusDie > 0) {
-			bonusDie = `<div class="modifier plus">+</div><div class="die bonus"><span>${this.bonusDieRoll}</span></div>`;
+			const bonusDieRoll = this.bonusDieRoll > 0 ? this.bonusDieRoll : `d${this.bonusDie}`;
+			bonusDie = `<div class="modifier plus">+</div><div class="die bonus"><span>${bonusDieRoll}</span></div>`;
 		}
 
 		let html = `
