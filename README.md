@@ -6,7 +6,7 @@ This is a dice roller web component. I created this mainly for use with playing 
 
 ## Usage
 
-Install the dice-roller.js script and add the <code>&lt;dice-roller>&lt;/dice-roller></code> to your html. Clicking on the dice makes them roll. You can change the dice and how they are totaled using the attributes. More detailed instructions TBD.
+Install the dice-roller.js script and add the <code>&lt;dice-roller>&lt;/dice-roller></code> to your html. Clicking on the dice makes them roll. You can change the dice and how they are totaled using the attributes. The component can be styled using css variables (I have plans for more styling later). More detailed instructions TBD.
 
 ### Attributes
 

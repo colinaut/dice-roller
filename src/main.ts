@@ -248,7 +248,7 @@ export default class DiceRoller extends HTMLElement {
             }
             .total h5 {
                 margin: 0;
-                font-size: 0.6em;
+                font-size: ${size / 2.5}em;
                 position: absolute;
                 top:0;
             }
