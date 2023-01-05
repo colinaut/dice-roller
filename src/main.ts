@@ -64,10 +64,21 @@ export default class DiceRoller extends HTMLElement {
 		this.dice.forEach((die, i) => {
 			this.dieRolls[i] = this.rollDie(Number(die));
 		});
-		this.total =
-			this.dieRolls.reduce(function (accum, curValue) {
+		let total: number;
+		if (this.bestOf === this.dieRolls.length) {
+			total = this.dieRolls.reduce(function (accum, curValue) {
 				return accum + curValue;
-			}, 0) + this.modifier;
+			}, 0);
+		} else if (this.bestOf === 1) {
+			total = this.maxDie();
+		} else if (this.bestOf === 2) {
+			total = this.twoHighest().reduce(function (accum, curValue) {
+				return accum + curValue;
+			}, 0);
+		} else {
+			total = 0;
+		}
+		this.total = total + this.modifier;
 	}
 
 	private maxDie(): number {
@@ -120,6 +131,7 @@ export default class DiceRoller extends HTMLElement {
 
 	private render() {
 		const modifier: string = this.modifier > 0 ? "+" + this.modifier.toString() : this.modifier < 0 ? this.modifier.toString() : "";
+		const bestOf: string = this.bestOf < this.dieRolls.length ? `best of ${this.bestOf}` : "";
 		const css = `
         <style>
             .dice {
@@ -138,14 +150,22 @@ export default class DiceRoller extends HTMLElement {
                 font-size: 3rem;
             }
             .total {
+                width: 5rem;
                 height: 5rem;
                 display: flex;
+                line-height: 1;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                font-size: 3rem;
+                font-size: 1rem;
                 order: 2px solid transparent;
                 font-weight: bold;
-                padding-left: .5rem;
+            }
+            .total h4 {
+                margin: 0;
+            }
+            .total span{
+                font-size: 3rem;
             }
             .highest {
                 height: 5rem;
@@ -157,17 +177,19 @@ export default class DiceRoller extends HTMLElement {
                 font-weight: bold;
                 padding-left: .5rem;
             }
+            h3 {
+                display: flex;
+                gap: .4rem;
+            }
         </style>
         `;
 
 		let html = `
         <div>
-            <h3>${this.dice} <span>${modifier}</span></h3>
+            <h3><span>Dice: ${this.dice}</span> <span>${modifier}</span> <em>${bestOf}</em></h3>
             <div class="dice">
                 ${this.dieRolls.map((roll) => `<div class="die">${roll}</div>`).join("")} \
-                <div class="total">${this.total}</div>
-                <div class="highest">Highest: ${this.maxDie()}</div>
-                <div class="highest">Two Highest: ${this.twoHighest()}</div>
+                <div class="total"><h4>TOTAL</h4><span>${this.total}</span></div>
             </div>
         </div>
         `;
