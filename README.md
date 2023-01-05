@@ -10,7 +10,10 @@
 - [x] add built in form field for adjusting dice values
 - [ ] add svg for dice shape to match different polyhedrons
 - [ ] highlight the highest dice when BestOf is set
-- [ ] Add die roll history
 - [x] Add Bonus die for Agon
-- [ ] Separate form from dice so that it is two separate components that talk to another
-- [ ] Create better die pool builder UI for Agon
+- [x] Strip out form from dice-roller
+- [ ] Create dice-box component for listing dice roll history
+- [ ] Create dice-pbta, dice-agon, and dice-fitd components for each rolls in those systems
+- [ ] Add clear total function with delay
+- [ ] Add custom event handlers for roll and clearing totals
+- [ ] Add difficulty check

@@ -10,55 +10,28 @@ export default class DiceRoller extends HTMLElement {
 		return this.getAttribute(attr) || fallback;
 	}
 
-	private getArray(attr: string, fallback: string[] = []): string[] {
-		const temp = this.getA(attr, "");
-		if (!temp) return fallback;
-
-		let tempArray: string[] = [];
-		try {
-			// check to see if this is a JSON string
-			tempArray = JSON.parse(temp);
-		} catch (err) {
-			// check to see if this a comma separated string
-			tempArray = temp.split(",");
-		}
-		if (Array.isArray(tempArray)) {
-			return tempArray;
-		} else return fallback;
-	}
-
 	get dice(): string[] {
-		const diceAttr = this.getAttribute("dice") || "6";
+		const diceAttr = this.getA("dice", "6");
 		const diceArray = diceAttr.split(",");
 		return diceArray;
 	}
-	set dice(diceArray) {
-		this.setAttribute("dice", diceArray.toString());
-	}
 
 	get bonusDie(): number {
-		const bonusDie = this.getAttribute("bonus-die") || 0;
+		const bonusDie = this.getA("bonus-die", "0");
 		return Number(bonusDie);
-	}
-	set bonusDie(bonusDie) {
-		this.setAttribute("bonus-die", bonusDie.toString());
 	}
 
 	get modifier(): number {
-		const modifier = this.getAttribute("modifier") || 0;
+		const modifier = this.getA("modifier", "0");
 		return Number(modifier);
 	}
 
-	set modifier(modifier: number) {
-		this.setAttribute("modifier", modifier.toString());
-	}
-
 	get total(): string {
-		return this.getAttribute("total") || "sum";
+		return this.getA("total", "sum");
 	}
 
-	set total(total: string) {
-		this.setAttribute("total", total);
+	get title(): string {
+		return this.getA("title");
 	}
 
 	static get observedAttributes(): string[] {
@@ -70,7 +43,6 @@ export default class DiceRoller extends HTMLElement {
 	private finalTotal: number = 0;
 
 	public connectedCallback(): void {
-		this.rollDice();
 		this.render();
 		this.addEventListeners();
 	}
@@ -87,12 +59,16 @@ export default class DiceRoller extends HTMLElement {
 		let total: number;
 		if (this.total === "highest") {
 			total = this.maxDie();
-		} else if (this.total === "two highest") {
+		} else if (this.total === "highest-two") {
 			total = this.twoHighest().reduce(function (accum, curValue) {
 				return accum + curValue;
 			}, 0);
 		} else if (this.total === "lowest") {
 			total = this.minDie();
+		} else if (this.total === "lowest-two") {
+			total = this.twoLowest().reduce(function (accum, curValue) {
+				return accum + curValue;
+			}, 0);
 		} else {
 			total = this.dieRolls.reduce(function (accum, curValue) {
 				return accum + curValue;
@@ -128,12 +104,20 @@ export default class DiceRoller extends HTMLElement {
 		);
 	}
 
+	private twoLowest(): number[] {
+		return this.dieRolls.reduce(
+			(acc, rec) => {
+				return rec < acc[1] ? [acc[1], rec] : rec < acc[0] ? [rec, acc[1]] : acc;
+			},
+			[0, 0]
+		);
+	}
+
 	private rollAnimation() {
 		const changeDieFace = () => {
 			// console.log("🚀 ~ file: main.ts:49 ~ DiceRoller ~ changeDieFace ~ this.dieRoll", this.dieRoll);
 			this.rollDice();
 			this.render();
-			this.addEventListeners();
 		};
 
 		let nIntervalId: number | undefined;
@@ -144,11 +128,12 @@ export default class DiceRoller extends HTMLElement {
 
 		setTimeout(() => {
 			clearInterval(nIntervalId);
+			this.addEventListeners();
 		}, 1000);
 	}
 
 	private addEventListeners(): void {
-		const diceEl = this.shadow.querySelector(".dice");
+		const diceEl = this.shadow;
 		if (diceEl) {
 			diceEl.addEventListener(
 				"click",
@@ -160,104 +145,71 @@ export default class DiceRoller extends HTMLElement {
 				false
 			);
 		}
-		const form = this.shadow.querySelector("form");
-		if (form) {
-			form.addEventListener(
-				"submit",
-				(event) => {
-					console.log("🚀 ~ file: main.ts:136 ~ DiceRoller ~ addEventListeners ~ event", event);
-					event.preventDefault();
-					const target: EventTarget | null = event.target;
-					if (target) {
-						const dice: string = target.dice.value || "";
-						const modifier: string = target.modifier.value || "";
-						const bonusDie: string = target["bonus-die"].value || "";
-						const total: string = target["best-of"].value || "All Dice";
-						console.log(dice, modifier, total);
-
-						if (dice) {
-							this.dice = dice.split(",");
-							this.modifier = modifier ? Number(modifier) : 0;
-							this.bonusDie = bonusDie ? Number(bonusDie) : 0;
-							this.total = total;
-							this.render();
-							this.rollAnimation();
-							this.addEventListeners();
-						}
-					}
-				},
-				false
-			);
-		}
 	}
 
 	public attributeChangedCallback(name: string, oldValue: string, newValue: string) {
 		console.log("changed", name, oldValue, newValue);
-
-		this.render();
 	}
 
 	private render() {
 		const modifier: string = this.modifier > 0 ? "+" + this.modifier.toString() : this.modifier < 0 ? this.modifier.toString() : "";
 		const bonusDieText: string = this.bonusDie > 0 ? `+ bonus ${this.bonusDie}d` : "";
+		const title = this.title || `${this.dice} ${this.total} ${modifier} ${bonusDieText}`;
 		const css = `
         <style>
             :host {
                 margin: 1rem 0;
                 display: block;
+                font-weight: 700;
             }
             .dice {
                 display: flex;
-                gap: .8rem;
+                gap: .6em;
                 flex-wrap: wrap;
                 width: fit-content;
             }
             .die {
-                width: 5rem;
-                height: 5rem;
+                width: 2em;
+                height: 2em;
                 border: 2px solid #fff;
-                border-radius: .5rem;
+                border-radius: .5em;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 3rem;
             }
-            .bonus {
-                background: #ffffff22;
+            .die span {
+                font-size: 1em;
             }
             .modifier {
-                width: 2rem;
-                height: 5rem;
+                width: 1em;
+                height: 2em;
                 display: flex;
-                font-size: 2rem;
                 align-items: center;
                 justify-content: center;
-                font-weight: bold;
+                border: 2px solid transparent;
             }
             .modifier:empty {
                 display: none;
             }
+            .modifier.plus {
+                width: .5em;
+            }
             .total {
-                width: 5rem;
-                height: 5rem;
+                width: 2em;
+                height: 2em;
                 display: flex;
                 line-height: 1;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                font-size: 1rem;
-                order: 2px solid transparent;
-                font-weight: bold;
+                justify-content: top;
+                border: 2px solid transparent;
             }
-            .sub.total {
-                font-size: .7rem;
-                width: 4rem;
-            }
-            .total h4 {
+            .total h5 {
                 margin: 0;
+                font-size: 0.6em;
             }
-            .total span{
-                font-size: 3em;
+            .total span {
+                font-size: 1em;
             }
             .highest {
                 height: 5rem;
@@ -265,74 +217,37 @@ export default class DiceRoller extends HTMLElement {
                 align-items: center;
                 justify-content: center;
                 font-size: 1rem;
-                order: 2px solid transparent;
+                border: 2px solid transparent;
                 font-weight: bold;
-                padding-left: .5rem;
+                padding-left: .5em;
             }
-            h3 {
+            h4 {
                 display: flex;
-                gap: .4rem;
+                gap: .4em;
             }
-            form {
-                margin-bottom: 1rem;
-                display: flex;
-                flex-wrap: wrap;
-                gap: .8rem;
-            }
-            input {
-                max-width: 6rem;
-            }
-            #modifier, #bonus-die {
-                width: 2rem;
-            }
+            
         </style>
         `;
-
-		let selectArray = ["sum", "highest", "two highest", "lowest"];
-		let selectOptions = "";
-		selectArray.forEach((item) => {
-			if (item === this.total) {
-				selectOptions += `<option value="${item}" selected>${item}</option>`;
-			} else {
-				selectOptions += `<option value="${item}">${item}</option>`;
-			}
-		});
 
 		let bonusDie = "";
 
 		if (this.bonusDie > 0) {
-			bonusDie = `<div class="total sub"><h4>SUBTOTAL</h4><span>${this.finalTotal - this.bonusDieRoll}</span></div><div class="die bonus">${this.bonusDieRoll}</div>`;
+			bonusDie = `<div class="modifier plus">+</div><div class="die bonus"><span>${this.bonusDieRoll}</span></div>`;
 		}
 
 		let html = `
         <div>
-            <h3>${this.dice} ${modifier} ${this.total} ${bonusDieText}</h3>
-            <form>
-                <div>
-                    <label for="dice">Dice:</label>
-                    <input id="dice" type="text" name="dice" value="${this.dice}">
-                </div>
-                <div>
-                    <label for="modifier">Modifier:</label>
-                    <input id="modifier" type="number" name="modifier" value="${this.modifier}">
-                </div>
-                <div>
-                    <label for="best-of">Total:</label>
-                    <select id="best-of" name="best-of">
-                        ${selectOptions}
-                    </select>
-                </div>
-                <div>
-                    <label for="bonus-die">Bonus Die:</label>
-                    <input id="bonus-die" type="number" name="bonus-die" value="${this.bonusDie}">
-                </div>
-                <button type="submit">Roll Dice</button>
-            </form>
+            <h4>${title}</h4>
             <div class="dice">
-                ${this.dieRolls.map((roll) => `<div class="die">${roll}</div>`).join("")}
+                ${this.dice
+					.map((dice, i) => {
+						const text = this.dieRolls[i] || `d${dice}`;
+						return `<div class="die"><span>${text}</span></div>`;
+					})
+					.join("")}
                 <div class="modifier">${modifier}</div>
                 ${bonusDie}
-                <div class="total"><h4>TOTAL</h4><span>${this.finalTotal}</span></div>
+                <div class="total"><h5>TOTAL</h5><span>${this.finalTotal}</span></div>
             </div>
         </div>
         `;
