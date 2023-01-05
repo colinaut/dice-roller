@@ -1,0 +1,32 @@
+{
+	"name": "@colinaut/dice-roller",
+	"version": "0.8.1",
+	"type": "module",
+	"main": "dist/dice-roller.js",
+	"unpkg": "dist/dice-roller.js",
+	"keywords": [
+		"web component",
+		"typescript",
+		"theme switch"
+	],
+	"author": "Colin Fahrion",
+	"license": "MIT",
+	"repository": "https://github.com/colinaut/dice-roller.git",
+	"publishConfig": {
+		"access": "public"
+	},
+	"homepage": "https://colinaut.github.io/dice-roller/",
+	"scripts": {
+		"test": "echo \"No test specified\"",
+		"dev": "vite",
+		"build": "tsc && vite build && cpy 'docs/dice-roller.*' 'dist'",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"cpy-cli": "^4.2.0",
+		"eslint": "^8.28.0",
+		"rollup-plugin-minify-html-literals": "^1.2.6",
+		"typescript": "^4.6.4",
+		"vite": "^3.2.3"
+	}
+}
