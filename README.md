@@ -1,5 +1,50 @@
 # Dice Roller Web Component
 
+This is a dice roller web component. I created this mainly for use with playing table top role playing games online. This can be used just as a simple web dice roller or incorporated into interactive rule books or character sheets.
+
+## Installation
+
+Add the dice-roller.js script to your web site, then add the `<dice-roller></dice-roller>` web component to your html.
+
+### CDN
+
+```
+<script src="https://unpkg.com/@colinaut/dice-roller/dist/dice-roller.js"></script>
+```
+
+### NPM/PNPM/YARN
+
+```
+npm i @colinaut/dice-roller
+
+pnpm i @colinaut/dice-roller
+
+yarn add @colinaut/dice-roller
+
+```
+
+### Eleventy static site
+
+If you are using [Eleventy](https://www.11ty.dev), and want to install locally rather than rely on the CDN, you can install via NPM/PNPM/YARN and then pass through the js file so that it is included in the output. Then you would just need to add it to the head.
+
+```
+eleventyConfig.addPassthroughCopy({
+    "node_modules/@colinaut/dice-roller/dist/dice-roller.js": "js/dice-roller.js",
+})
+```
+```
+<script src="/js/dice-roller.js"></script>
+```
+
+### Attributes
+
+1.  dice: string comma separated list of dice
+2.  total: how the total is arrived at
+3.  modifier: + or - after dice are rolled
+4.  bonus-die: additional die added after dice are summed up
+5.  difficulty: number required for success
+6.  size: visual size of dice
+
 ## To Do
 
 - [ ] add dice name attribute for each component

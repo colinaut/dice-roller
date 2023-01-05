@@ -18,6 +18,7 @@
 				diceRoller.setAttribute("modifier", form.modifier.value);
 				diceRoller.setAttribute("bonus-die", form["bonus-die"].value);
 				diceRoller.setAttribute("difficulty", form.difficulty.value);
+				diceRoller.setAttribute("size", form.size.value);
 				const dice = diceRoller.shadowRoot.querySelector(".dice");
 				dice.click();
 			}
@@ -110,13 +111,31 @@
 			<header class="content">
 				<h1>Dice Roller Web Component</h1>
 				<div>
-					<p><strong>Super Small!</strong> 4.04 KiB / gzip: 1.75 KiB</p>
-					<p>Github: <a href="https://github.com/colinaut/theme-multi-switch">colinaut/theme-multi-switch</a></p>
-					<p>NPM: <a href="https://www.npmjs.com/package/@colinaut/theme-multi-switch">@colinaut/theme-multi-switch</a></p>
+					<p>Version: 0.2.2 beta</p>
+					<p>Author: Colin Fahrion</p>
+					<p>Github: <a href="https://github.com/colinaut/dice-roller">colinaut/dice-roller</a></p>
+					<p>NPM: <a href="https://www.npmjs.com/package/@colinaut/dice-roller">@colinaut/dice-roller</a></p>
 				</div>
 			</header>
 			<section class="content">
-				<h2>Dice Roller: All Attributes</h2>
+				<p>This is a dice roller web component <code>&lt;dice-roller>&lt;/dice-roller></code></p>
+				<p>
+					I created this mainly for use with playing table top role playing games online. This can be used just as a simple web dice roller or incorporated into
+					interactive rule books or character sheets.
+				</p>
+				<h3>Attributes</h3>
+				<ol>
+					<li>dice: string comma separated list of dice</li>
+					<li>total: how the total is arrived at</li>
+					<li>modifier: + or - after dice are rolled</li>
+					<li>bonus-die: additional die added after dice are summed up</li>
+					<li>difficulty: number required for success</li>
+					<li>size: visual size of dice</li>
+				</ol>
+			</section>
+			<header><h2>Examples</h2></header>
+			<section class="content">
+				<h3>Dice Roller: All Attributes</h3>
 				<form onsubmit="roll(event)">
 					<div>
 						<label for="dice">Dice:</label>
@@ -144,12 +163,16 @@
 						<label for="difficulty">Difficulty:</label>
 						<input id="difficulty" class="w-8" type="number" name="difficulty" value="0" />
 					</div>
+					<div>
+						<label for="size">Size:</label>
+						<input id="size" class="w-8" type="number" name="size" value="2" />
+					</div>
 					<button type="submit">Roll Dice</button>
 				</form>
 				<dice-roller id="dice-roller" size="2"></dice-roller>
 			</section>
 			<section class="content">
-				<h2>Powered By The Apocalypse</h2>
+				<h3>Powered By The Apocalypse</h3>
 				<form onsubmit="rollPBTA(event)">
 					<div>
 						<label for="modifier-pbta">Modifier:</label>
@@ -170,7 +193,7 @@
 				<dice-roller id="dice-roller-pbta" size="2" dice="6,6"></dice-roller>
 			</section>
 			<section class="content">
-				<h2>Forged In The Dark</h2>
+				<h3>Forged In The Dark</h3>
 				<form onsubmit="rollFITD(event)">
 					<div>
 						<label for="die-pool">Die Pool:</label>
@@ -181,7 +204,7 @@
 				<dice-roller id="dice-roller-fitd" size="2" dice="6" total="highest"></dice-roller>
 			</section>
 			<section class="content">
-				<h2>Agon: Hero</h2>
+				<h3>Agon: Hero</h3>
 				<form onsubmit="rollAgon(event)">
 					<div>
 						<label for="name-die">Name Die:</label>
@@ -258,7 +281,7 @@
 				<dice-roller id="dice-roller-agon" size="2" dice="6,6" total="highest-two"></dice-roller>
 			</section>
 			<section class="content">
-				<h2>Agon: Strife Player</h2>
+				<h3>Agon: Strife Player</h3>
 				<form onsubmit="rollAgonStrife(event)">
 					<div>
 						<label for="strife-dice">Dice:</label>
@@ -271,6 +294,39 @@
 					<button type="submit">Roll Dice</button>
 				</form>
 				<dice-roller id="dice-roller-agon-strife" size="2" dice="6" modifier="5" total="highest"></dice-roller>
+			</section>
+			<section class="content">
+				<h2>Installation</h2>
+				<p>Add the dice-roller.js script to your web site, then add the <code>&lt;dice-roller>&lt;/dice-roller></code> web component to your html.</p>
+				<h3 id="cdn">CDN</h3>
+				<pre>
+&lt;script src=&quot;https://unpkg.com/@colinaut/dice-roller/dist/dice-roller.js&quot;&gt;&lt;/script&gt;
+</pre
+				>
+				<h3 id="npmpnpmyarn">NPM/PNPM/YARN</h3>
+				<pre>
+npm i @colinaut/dice-roller
+
+pnpm i @colinaut/dice-roller
+
+yarn add @colinaut/dice-roller
+</pre
+				>
+				<h3 id="eleventy-static-site">Eleventy static site</h3>
+				<p>
+					If you are using <a href="https://www.11ty.dev">Eleventy</a>, and want to install locally rather than rely on the CDN, you can install via NPM/PNPM/YARN and
+					then pass through the js file so that it is included in the output. Then you would just need to add it to the head.
+				</p>
+				<pre>
+eleventyConfig.addPassthroughCopy({
+    &quot;node_modules/@colinaut/dice-roller/dist/dice-roller.js&quot;: &quot;js/dice-roller.js&quot;,
+})
+</pre
+				>
+				<pre>
+&lt;script src=&quot;/js/dice-roller.js&quot;&gt;&lt;/script&gt;
+</pre
+				>
 			</section>
 		</main>
 	</body>
