@@ -4,6 +4,20 @@ This is a dice roller web component. I created this mainly for use with playing 
 
 [Demo Page](https://colinaut.github.io/dice-roller/)
 
+## Usage
+
+Install the dice-roller.js script and add the <code>&lt;dice-roller>&lt;/dice-roller></code> to your html. Clicking on the dice makes them roll. You can change the dice and how they are totaled using the attributes. More detailed instructions TBD.
+
+### Attributes
+
+1.  dice: string comma separated list of dice to roll (i.e., "6,8,10,6")
+2.  total: how the total is arrived at
+3.  modifier: + or - after dice are rolled
+4.  bonus-die: additional die added after dice are summed up
+5.  difficulty: number required for success
+6.  size: visual size of dice
+
+
 ## Installation
 
 Add the dice-roller.js script to your web site, then add the `<dice-roller></dice-roller>` web component to your html.
@@ -37,15 +51,6 @@ eleventyConfig.addPassthroughCopy({
 ```
 <script src="/js/dice-roller.js"></script>
 ```
-
-### Attributes
-
-1.  dice: string comma separated list of dice to roll (i.e., "6,8,10,6")
-2.  total: how the total is arrived at
-3.  modifier: + or - after dice are rolled
-4.  bonus-die: additional die added after dice are summed up
-5.  difficulty: number required for success
-6.  size: visual size of dice
 
 ## To Do
 
