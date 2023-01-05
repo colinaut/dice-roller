@@ -5,9 +5,106 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="style.css" />
 		<!-- <script src="/script.js"></script> -->
-		<title>Theme Multi Switch Web Component</title>
+		<title>Dice Roller Web Component</title>
 		<meta name="theme-color" content="#000" />
 		
+		<script>
+			function roll(event) {
+				event.preventDefault();
+				const form = event.target;
+				const diceRoller = document.getElementById("dice-roller");
+				diceRoller.setAttribute("dice", form.dice.value);
+				diceRoller.setAttribute("total", form.total.value);
+				diceRoller.setAttribute("modifier", form.modifier.value);
+				diceRoller.setAttribute("bonus-die", form["bonus-die"].value);
+				diceRoller.setAttribute("difficulty", form.difficulty.value);
+				diceRoller.setAttribute("size", form.size.value);
+				const dice = diceRoller.shadowRoot.querySelector(".dice");
+				dice.click();
+			}
+			function rollPBTA(event) {
+				event.preventDefault();
+				const form = event.target;
+				const diceRoller = document.getElementById("dice-roller-pbta");
+				let modifier = Number(form.modifier.value);
+				const advantage = form.advantage.value;
+				if (advantage === "advantage") {
+					modifier += 1;
+					diceRoller.setAttribute("dice", "6,6");
+					diceRoller.setAttribute("total", "sum");
+				} else if (advantage === "disadvantage") {
+					modifier -= 1;
+					diceRoller.setAttribute("dice", "6,6");
+					diceRoller.setAttribute("total", "sum");
+				} else if (advantage === "advantage-die") {
+					diceRoller.setAttribute("total", "highest-two");
+					diceRoller.setAttribute("dice", "6,6,6");
+				} else if (advantage === "disadvantage-die") {
+					diceRoller.setAttribute("total", "lowest-two");
+					diceRoller.setAttribute("dice", "6,6,6");
+				} else if (advantage === "normal") {
+					diceRoller.setAttribute("total", "sum");
+					diceRoller.setAttribute("dice", "6,6");
+				}
+				diceRoller.setAttribute("modifier", modifier.toString());
+				const dice = diceRoller.shadowRoot.querySelector(".dice");
+				dice.click();
+			}
+			function rollFITD(event) {
+				event.preventDefault();
+				const form = event.target;
+				const diceRoller = document.getElementById("dice-roller-fitd");
+				const diePool = Number(form["die-pool"].value);
+				if (diePool > 0) {
+					let dice = "6";
+					for (let i = 1; i < diePool; i++) {
+						dice += ",6";
+					}
+					console.log(dice);
+					diceRoller.setAttribute("dice", dice);
+					diceRoller.setAttribute("total", "highest");
+				} else {
+					diceRoller.setAttribute("dice", "6,6");
+					diceRoller.setAttribute("total", "lowest");
+				}
+				const dice = diceRoller.shadowRoot.querySelector(".dice");
+				dice.click();
+			}
+			function rollAgon(event) {
+				event.preventDefault();
+				const form = event.target;
+				const diceRoller = document.getElementById("dice-roller-agon");
+				let dicePool = form["name-die"].value;
+				const selects = form.querySelectorAll("select:not(#name-die, #divine)");
+				selects.forEach((el) => {
+					const value = Number(el.value);
+					// skip first one
+					if (!isNaN(value)) {
+						dicePool = dicePool + `,${value}`;
+					}
+				});
+				console.log(dicePool);
+				diceRoller.setAttribute("dice", dicePool);
+				if (form.divine.value === "divine") {
+					diceRoller.setAttribute("bonus-die", "4");
+				} else {
+					diceRoller.setAttribute("bonus-die", "0");
+				}
+
+				const dice = diceRoller.shadowRoot.querySelector(".dice");
+				dice.click();
+			}
+			function rollAgonStrife(event) {
+				event.preventDefault();
+				const form = event.target;
+				const diceRoller = document.getElementById("dice-roller-agon-strife");
+				diceRoller.setAttribute("dice", form["strife-dice"].value);
+				diceRoller.setAttribute("modifier", form["strife-modifier"].value);
+
+				const dice = diceRoller.shadowRoot.querySelector(".dice");
+				dice.click();
+			}
+		</script>
 		<script type="module" crossorigin src="/dice-roller.js"></script>
 	</head>
 	<body>
@@ -15,15 +112,222 @@
 			<header class="content">
 				<h1>Dice Roller Web Component</h1>
 				<div>
-					<p><strong>Super Small!</strong> 4.04 KiB / gzip: 1.75 KiB</p>
-					<p>Github: <a href="https://github.com/colinaut/theme-multi-switch">colinaut/theme-multi-switch</a></p>
-					<p>NPM: <a href="https://www.npmjs.com/package/@colinaut/theme-multi-switch">@colinaut/theme-multi-switch</a></p>
+					<p>Version: 0.2.2 beta</p>
+					<p>Author: Colin Fahrion</p>
+					<p>Github: <a href="https://github.com/colinaut/dice-roller">colinaut/dice-roller</a></p>
+					<p>NPM: <a href="https://www.npmjs.com/package/@colinaut/dice-roller">@colinaut/dice-roller</a></p>
 				</div>
 			</header>
 			<section class="content">
-				<h2>Examples</h2>
-				<dice-roller></dice-roller>
-				<dice-roller sides="10"></dice-roller>
+				<p>This is a dice roller web component <code>&lt;dice-roller>&lt;/dice-roller></code></p>
+				<p>
+					I created this mainly for use with playing table top role playing games online. This can be used just as a simple web dice roller or incorporated into
+					interactive rule books or character sheets.
+				</p>
+				<h3>Attributes</h3>
+				<ol>
+					<li>dice: string comma separated list of dice</li>
+					<li>total: how the total is arrived at</li>
+					<li>modifier: + or - after dice are rolled</li>
+					<li>bonus-die: additional die added after dice are summed up</li>
+					<li>difficulty: number required for success</li>
+					<li>size: visual size of dice</li>
+				</ol>
+			</section>
+			<header><h2>Examples</h2></header>
+			<section class="content">
+				<h3>Dice Roller: All Attributes</h3>
+				<form onsubmit="roll(event)">
+					<div>
+						<label for="dice">Dice:</label>
+						<input id="dice" type="text" name="dice" value="6" />
+					</div>
+					<div>
+						<label for="total">Total:</label>
+						<select id="total" name="total">
+							<option>sum</option>
+							<option>highest</option>
+							<option>highest-two</option>
+							<option>lowest</option>
+							<option>lowest-two</option>
+						</select>
+					</div>
+					<div>
+						<label for="modifier">Modifier:</label>
+						<input id="modifier" class="w-8" type="number" name="modifier" value="0" />
+					</div>
+					<div>
+						<label for="bonus-die">Bonus Die:</label>
+						<input id="bonus-die" class="w-8" type="number" name="bonus-die" value="0" />
+					</div>
+					<div>
+						<label for="difficulty">Difficulty:</label>
+						<input id="difficulty" class="w-8" type="number" name="difficulty" value="0" />
+					</div>
+					<div>
+						<label for="size">Size:</label>
+						<input id="size" class="w-8" type="number" name="size" value="2" />
+					</div>
+					<button type="submit">Roll Dice</button>
+				</form>
+				<dice-roller id="dice-roller" size="2"></dice-roller>
+			</section>
+			<section class="content">
+				<h3>Powered By The Apocalypse</h3>
+				<form onsubmit="rollPBTA(event)">
+					<div>
+						<label for="modifier-pbta">Modifier:</label>
+						<input id="modifier-pbta" class="w-8" type="number" name="modifier" value="0" />
+					</div>
+					<div>
+						<label for="advantage">Advantage:</label>
+						<select id="advantage" name="advantage">
+							<option value="normal">Roll normal</option>
+							<option value="advantage">Roll with +1 advantage</option>
+							<option value="disadvantage">Roll with -1 disadvantage</option>
+							<option value="advantage-die">Roll with advantage die</option>
+							<option value="disadvantage-die">Roll with disadvantage die</option>
+						</select>
+					</div>
+					<button type="submit">Roll Dice</button>
+				</form>
+				<dice-roller id="dice-roller-pbta" size="2" dice="6,6"></dice-roller>
+			</section>
+			<section class="content">
+				<h3>Forged In The Dark</h3>
+				<form onsubmit="rollFITD(event)">
+					<div>
+						<label for="die-pool">Die Pool:</label>
+						<input id="die-pool" class="w-8" type="number" name="die-pool" value="1" />
+					</div>
+					<button type="submit">Roll Dice</button>
+				</form>
+				<dice-roller id="dice-roller-fitd" size="2" dice="6" total="highest"></dice-roller>
+			</section>
+			<section class="content">
+				<h3>Agon: Hero</h3>
+				<form onsubmit="rollAgon(event)">
+					<div>
+						<label for="name-die">Name Die:</label>
+						<select name="name-die" id="name-die">
+							<option value="6">d6</option>
+							<option value="8">d8</option>
+							<option value="10">d10</option>
+						</select>
+					</div>
+					<div>
+						<label for="epithet">Epithet:</label>
+						<select name="epithet" id="epithet">
+							<option value="na">N/A</option>
+							<option value="6">d6</option>
+							<option value="8">d8</option>
+							<option value="10">d10</option>
+						</select>
+					</div>
+					<div>
+						<label for="epithet2">2nd Epithet:</label>
+						<select name="epithet2" id="epithet2">
+							<option value="na">N/A</option>
+							<option value="6">d6</option>
+							<option value="8">d8</option>
+							<option value="10">d10</option>
+						</select>
+					</div>
+					<div>
+						<label for="domain">Domain:</label>
+						<select name="domain" id="domain">
+							<option value="6">d6</option>
+							<option value="8">d8</option>
+							<option value="10">d10</option>
+						</select>
+					</div>
+					<div>
+						<label for="domain2">2nd Domain:</label>
+						<select name="domain2" id="domain2">
+							<option value="na">N/A</option>
+							<option value="6">d6</option>
+							<option value="8">d8</option>
+							<option value="10">d10</option>
+						</select>
+					</div>
+					<div>
+						<label for="bond">Bond:</label>
+						<select name="bond" id="bond">
+							<option value="na">N/A</option>
+							<option value="6">d6</option>
+							<option value="8">d8</option>
+							<option value="10">d10</option>
+							<option value="12">d12</option>
+						</select>
+					</div>
+					<div>
+						<label for="advantage-die">Advantage:</label>
+						<select name="advantage-die" id="advantage-die">
+							<option value="na">N/A</option>
+							<option value="6">d6</option>
+							<option value="8">d8</option>
+							<option value="10">d10</option>
+							<option value="12">d12</option>
+						</select>
+					</div>
+					<div>
+						<label for="divine">Divine Favor:</label>
+						<select name="divine" id="divine">
+							<option value="na">N/A</option>
+							<option value="divine">Call Divine Favor</option>
+						</select>
+					</div>
+					<button type="submit">Roll Dice</button>
+				</form>
+				<dice-roller id="dice-roller-agon" size="2" dice="6,6" total="highest-two"></dice-roller>
+			</section>
+			<section class="content">
+				<h3>Agon: Strife Player</h3>
+				<form onsubmit="rollAgonStrife(event)">
+					<div>
+						<label for="strife-dice">Dice:</label>
+						<input id="strife-dice" type="text" name="strife-dice" value="6" />
+					</div>
+					<div>
+						<label for="strife-modifier">Modifier:</label>
+						<input id="strife-modifier" class="w-8" type="number" name="strife-modifier" value="5" />
+					</div>
+					<button type="submit">Roll Dice</button>
+				</form>
+				<dice-roller id="dice-roller-agon-strife" size="2" dice="6" modifier="5" total="highest"></dice-roller>
+			</section>
+			<section class="content">
+				<h2>Installation</h2>
+				<p>Add the dice-roller.js script to your web site, then add the <code>&lt;dice-roller>&lt;/dice-roller></code> web component to your html.</p>
+				<h3 id="cdn">CDN</h3>
+				<pre>
+&lt;script src=&quot;https://unpkg.com/@colinaut/dice-roller/dist/dice-roller.js&quot;&gt;&lt;/script&gt;
+</pre
+				>
+				<h3 id="npmpnpmyarn">NPM/PNPM/YARN</h3>
+				<pre>
+npm i @colinaut/dice-roller
+
+pnpm i @colinaut/dice-roller
+
+yarn add @colinaut/dice-roller
+</pre
+				>
+				<h3 id="eleventy-static-site">Eleventy static site</h3>
+				<p>
+					If you are using <a href="https://www.11ty.dev">Eleventy</a>, and want to install locally rather than rely on the CDN, you can install via NPM/PNPM/YARN and
+					then pass through the js file so that it is included in the output. Then you would just need to add it to the head.
+				</p>
+				<pre>
+eleventyConfig.addPassthroughCopy({
+    &quot;node_modules/@colinaut/dice-roller/dist/dice-roller.js&quot;: &quot;js/dice-roller.js&quot;,
+})
+</pre
+				>
+				<pre>
+&lt;script src=&quot;/js/dice-roller.js&quot;&gt;&lt;/script&gt;
+</pre
+				>
 			</section>
 		</main>
 	</body>

@@ -141,7 +141,7 @@ export default class DiceRoller extends HTMLElement {
 			this.render();
 		};
 
-		let nIntervalId: number | undefined;
+		let nIntervalId: number | undefined | ReturnType<typeof setInterval>;
 
 		if (!nIntervalId) {
 			nIntervalId = setInterval(changeDieFace, 100);
