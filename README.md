@@ -2,6 +2,8 @@
 
 This is a dice roller web component. I created this mainly for use with playing table top role playing games online. This can be used just as a simple web dice roller or incorporated into interactive rule books or character sheets.
 
+[Demo Page](https://colinaut.github.io/dice-roller/)
+
 ## Installation
 
 Add the dice-roller.js script to your web site, then add the `<dice-roller></dice-roller>` web component to your html.
