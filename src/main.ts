@@ -222,6 +222,8 @@ export default class DiceRoller extends HTMLElement {
             h4 {
                 display: flex;
                 gap: ${size / 2}em;
+                font-size: ${size / 1.5}em;
+                margin: 0 0 .4em;
             }
             
         </style>
