@@ -16,5 +16,6 @@
 - [ ] Create dice-pbta, dice-agon, and dice-fitd components for each rolls in those systems
 - [ ] Add clear total function with delay
 - [ ] Add custom event handlers for roll and clearing totals
-- [ ] Add difficulty check
+- [x] Add difficulty check
+- [ ] Allow for multiple difficulty levels 
 - [ ] Add way to remove header

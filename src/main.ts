@@ -30,6 +30,10 @@ export default class DiceRoller extends HTMLElement {
 		return this.getA("total", "sum");
 	}
 
+	get difficulty(): number {
+		return Number(this.getA("difficulty", "0"));
+	}
+
 	get title(): string {
 		return this.getA("title");
 	}
@@ -87,6 +91,9 @@ export default class DiceRoller extends HTMLElement {
 			total += this.bonusDieRoll;
 		}
 		this.finalTotal = total + this.modifier;
+		if (this.difficulty > 0) {
+			this.success = total >= this.difficulty;
+		}
 		return this.finalTotal;
 	}
 
@@ -150,6 +157,7 @@ export default class DiceRoller extends HTMLElement {
 				console.log("roll");
 
 				this.finalTotal = undefined;
+				this.success = false;
 				this.render();
 				this.rollAnimation();
 			},
@@ -167,6 +175,12 @@ export default class DiceRoller extends HTMLElement {
 		const title = this.title || `${this.dice} ${this.total} ${modifier} ${bonusDieText}`;
 		const size = this.size;
 		const finalTotal = this.finalTotal !== undefined ? `<div class="total"><h5>TOTAL</h5><span>${this.finalTotal}</span></div>` : "";
+		const success =
+			this.finalTotal !== undefined && this.difficulty > 0
+				? this.success
+					? "<div class='result success'><span>Success!</span></div>"
+					: "<div class='result failure'><span>Fail</span></div>"
+				: "";
 		const css = `
         <style>
             :host {
@@ -226,6 +240,17 @@ export default class DiceRoller extends HTMLElement {
             .total span {
                 font-size: ${size}em;
             }
+            .result {
+                height: ${size * 2}em;
+                display: flex;
+                line-height: 1;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .result span {
+                font-size: ${size / 1.5}em;
+            }
             h4 {
                 display: flex;
                 gap: ${size / 2}em;
@@ -255,6 +280,7 @@ export default class DiceRoller extends HTMLElement {
                 <div class="modifier">${modifier}</div>
                 ${bonusDie}
                 ${finalTotal}
+                ${success}
             </div>
         </div>
         `;
