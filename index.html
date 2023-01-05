@@ -93,6 +93,16 @@
 				const dice = diceRoller.shadowRoot.querySelector(".dice");
 				dice.click();
 			}
+			function rollAgonStrife(event) {
+				event.preventDefault();
+				const form = event.target;
+				const diceRoller = document.getElementById("dice-roller-agon-strife");
+				diceRoller.setAttribute("dice", form["strife-dice"].value);
+				diceRoller.setAttribute("modifier", form["strife-modifier"].value);
+
+				const dice = diceRoller.shadowRoot.querySelector(".dice");
+				dice.click();
+			}
 		</script>
 	</head>
 	<body>
@@ -246,6 +256,21 @@
 					<button type="submit">Roll Dice</button>
 				</form>
 				<dice-roller id="dice-roller-agon" size="2" dice="6,6" total="highest-two"></dice-roller>
+			</section>
+			<section class="content">
+				<h2>Agon: Strife Player</h2>
+				<form onsubmit="rollAgonStrife(event)">
+					<div>
+						<label for="strife-dice">Dice:</label>
+						<input id="strife-dice" type="text" name="strife-dice" value="6" />
+					</div>
+					<div>
+						<label for="strife-modifier">Modifier:</label>
+						<input id="strife-modifier" class="w-8" type="number" name="strife-modifier" value="5" />
+					</div>
+					<button type="submit">Roll Dice</button>
+				</form>
+				<dice-roller id="dice-roller-agon-strife" size="2" dice="6" modifier="5" total="highest"></dice-roller>
 			</section>
 		</main>
 	</body>
