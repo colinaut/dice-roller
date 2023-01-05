@@ -40,7 +40,7 @@ eleventyConfig.addPassthroughCopy({
 
 ### Attributes
 
-1.  dice: string comma separated list of dice
+1.  dice: string comma separated list of dice to roll (i.e., "6,8,10,6")
 2.  total: how the total is arrived at
 3.  modifier: + or - after dice are rolled
 4.  bonus-die: additional die added after dice are summed up

@@ -112,7 +112,7 @@
 			<header class="content">
 				<h1>Dice Roller Web Component</h1>
 				<div>
-					<p>Version: 0.2.2 beta</p>
+					<p>Version: 0.2.x beta</p>
 					<p>Author: Colin Fahrion</p>
 					<p>Github: <a href="https://github.com/colinaut/dice-roller">colinaut/dice-roller</a></p>
 					<p>NPM: <a href="https://www.npmjs.com/package/@colinaut/dice-roller">@colinaut/dice-roller</a></p>
@@ -126,7 +126,7 @@
 				</p>
 				<h3>Attributes</h3>
 				<ol>
-					<li>dice: string comma separated list of dice</li>
+					<li>dice: string comma separated list of dice to roll (i.e.,"6,8,10,6")</li>
 					<li>total: how the total is arrived at</li>
 					<li>modifier: + or - after dice are rolled</li>
 					<li>bonus-die: additional die added after dice are summed up</li>
@@ -285,7 +285,7 @@
 				<h3>Agon: Strife Player</h3>
 				<form onsubmit="rollAgonStrife(event)">
 					<div>
-						<label for="strife-dice">Dice:</label>
+						<label for="strife-dice">Dice (comma separated list: i.e., "6,8,10,6"):</label>
 						<input id="strife-dice" type="text" name="strife-dice" value="6" />
 					</div>
 					<div>
