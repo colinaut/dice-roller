@@ -1,6 +1,6 @@
 {
 	"name": "@colinaut/dice-roller",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"type": "module",
 	"main": "dist/dice-roller.js",
 	"unpkg": "dist/dice-roller.js",
