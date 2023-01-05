@@ -67,6 +67,7 @@ pre {
 	border-radius: 1rem;
 	padding: 1rem;
 	background-color: var(--track);
+	overflow: hidden;
 }
 
 ul {
