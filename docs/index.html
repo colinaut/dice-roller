@@ -7,7 +7,8 @@
 		<!-- <script src="/script.js"></script> -->
 		<title>Theme Multi Switch Web Component</title>
 		<meta name="theme-color" content="#000" />
-		<script type="module" src="/src/main.ts"></script>
+		
+		<script type="module" crossorigin src="/dice-roller.js"></script>
 	</head>
 	<body>
 		<main>
@@ -22,10 +23,7 @@
 			<section class="content">
 				<h2>Examples</h2>
 				<dice-roller></dice-roller>
-				<dice-roller dice="6,6,6"></dice-roller>
-				<dice-roller dice="10,10,4"></dice-roller>
-				<dice-roller dice="6,6" modifier="2"></dice-roller>
-				<dice-roller dice="6,6" modifier="-1"></dice-roller>
+				<dice-roller sides="10"></dice-roller>
 			</section>
 		</main>
 	</body>
