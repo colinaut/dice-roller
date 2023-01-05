@@ -34,6 +34,10 @@ export default class DiceRoller extends HTMLElement {
 		return this.getA("title");
 	}
 
+	get size(): number {
+		return Number(this.getA("size", "1"));
+	}
+
 	static get observedAttributes(): string[] {
 		return ["dice", "modifier", "best-of"];
 	}
@@ -155,6 +159,7 @@ export default class DiceRoller extends HTMLElement {
 		const modifier: string = this.modifier > 0 ? "+" + this.modifier.toString() : this.modifier < 0 ? this.modifier.toString() : "";
 		const bonusDieText: string = this.bonusDie > 0 ? `+ bonus ${this.bonusDie}d` : "";
 		const title = this.title || `${this.dice} ${this.total} ${modifier} ${bonusDieText}`;
+		const size = this.size;
 		const css = `
         <style>
             :host {
@@ -169,20 +174,20 @@ export default class DiceRoller extends HTMLElement {
                 width: fit-content;
             }
             .die {
-                width: 2em;
-                height: 2em;
+                width: ${size * 2}em;
+                height: ${size * 2}em;
                 border: 2px solid #fff;
-                border-radius: .5em;
+                border-radius: ${size / 2}em;
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
             .die span {
-                font-size: 1em;
+                font-size: ${size}em;
             }
             .modifier {
-                width: 1em;
-                height: 2em;
+                width: ${size}em;
+                height: ${size * 2}em;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -192,38 +197,31 @@ export default class DiceRoller extends HTMLElement {
                 display: none;
             }
             .modifier.plus {
-                width: .5em;
+                width: ${size / 2}em;
             }
             .total {
-                width: 2em;
-                height: 2em;
+                width: ${size * 2}em;
+                height: ${size * 2}em;
                 display: flex;
                 line-height: 1;
                 flex-direction: column;
                 align-items: center;
-                justify-content: top;
+                justify-content: center;
                 border: 2px solid transparent;
+                position: relative;
             }
             .total h5 {
                 margin: 0;
                 font-size: 0.6em;
+                position: absolute;
+                top:0;
             }
             .total span {
-                font-size: 1em;
-            }
-            .highest {
-                height: 5rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1rem;
-                border: 2px solid transparent;
-                font-weight: bold;
-                padding-left: .5em;
+                font-size: ${size}em;
             }
             h4 {
                 display: flex;
-                gap: .4em;
+                gap: ${size / 2}em;
             }
             
         </style>
