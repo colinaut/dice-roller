@@ -32,23 +32,33 @@ export default class DiceRoller extends HTMLElement {
 		const diceArray = diceAttr.split(",");
 		return diceArray;
 	}
+	set dice(diceArray) {
+		this.setAttribute("dice", diceArray.toString());
+	}
 
 	get modifier(): number {
 		const modifier = this.getAttribute("modifier") || 0;
 		return Number(modifier);
 	}
 
-	get bestOf(): number {
-		const bestOf = this.getAttribute("bestOf") || this.dice.length;
-		return Number(bestOf);
+	set modifier(modifier: number) {
+		this.setAttribute("modifier", modifier.toString());
+	}
+
+	get total(): string {
+		return this.getAttribute("total") || "All Dice";
+	}
+
+	set total(total: string) {
+		this.setAttribute("total", total);
 	}
 
 	static get observedAttributes(): string[] {
-		return ["dice", "modifier", "bestOf"];
+		return ["dice", "modifier", "best-of"];
 	}
 
 	private dieRolls: number[] = [];
-	private total: number = 0;
+	private finalTotal: number = 0;
 
 	public connectedCallback(): void {
 		this.rollDice();
@@ -61,30 +71,38 @@ export default class DiceRoller extends HTMLElement {
 	}
 
 	private rollDice() {
+		this.dieRolls = [];
 		this.dice.forEach((die, i) => {
 			this.dieRolls[i] = this.rollDie(Number(die));
 		});
 		let total: number;
-		if (this.bestOf === this.dieRolls.length) {
-			total = this.dieRolls.reduce(function (accum, curValue) {
-				return accum + curValue;
-			}, 0);
-		} else if (this.bestOf === 1) {
+		if (this.total === "Highest Die") {
 			total = this.maxDie();
-		} else if (this.bestOf === 2) {
+		} else if (this.total === "Two Highest Dice") {
 			total = this.twoHighest().reduce(function (accum, curValue) {
 				return accum + curValue;
 			}, 0);
+		} else if (this.total === "Lowest Die") {
+			total = this.minDie();
 		} else {
-			total = 0;
+			total = this.dieRolls.reduce(function (accum, curValue) {
+				return accum + curValue;
+			}, 0);
 		}
-		this.total = total + this.modifier;
+		this.finalTotal = total + this.modifier;
 	}
 
 	private maxDie(): number {
 		const max: number = this.dieRolls.reduce(function (a: number, b: number) {
 			return Math.max(a, b);
 		}, -Infinity);
+		return max;
+	}
+
+	private minDie(): number {
+		const max: number = this.dieRolls.reduce(function (a: number, b: number) {
+			return Math.min(a, b);
+		}, Infinity);
 		return max;
 	}
 
@@ -97,30 +115,65 @@ export default class DiceRoller extends HTMLElement {
 		);
 	}
 
+	private rollAnimation() {
+		const changeDieFace = () => {
+			// console.log("🚀 ~ file: main.ts:49 ~ DiceRoller ~ changeDieFace ~ this.dieRoll", this.dieRoll);
+			this.rollDice();
+			this.render();
+			this.addEventListeners();
+		};
+
+		let nIntervalId: number | undefined;
+
+		if (!nIntervalId) {
+			nIntervalId = setInterval(changeDieFace, 100);
+		}
+
+		setTimeout(() => {
+			clearInterval(nIntervalId);
+		}, 1000);
+	}
+
 	private addEventListeners(): void {
-		this.shadow.addEventListener(
-			"click",
-			() => {
-				// console.log(event);
+		const diceEl = this.shadow.querySelector(".dice");
+		if (diceEl) {
+			diceEl.addEventListener(
+				"click",
+				() => {
+					// console.log(event);
 
-				const changeDieFace = () => {
-					// console.log("🚀 ~ file: main.ts:49 ~ DiceRoller ~ changeDieFace ~ this.dieRoll", this.dieRoll);
-					this.rollDice();
-					this.render();
-				};
+					this.rollAnimation();
+				},
+				false
+			);
+		}
+		const form = this.shadow.querySelector("form");
+		if (form) {
+			form.addEventListener(
+				"submit",
+				(event) => {
+					console.log("🚀 ~ file: main.ts:136 ~ DiceRoller ~ addEventListeners ~ event", event);
+					event.preventDefault();
+					const target: EventTarget | null = event.target;
+					if (target) {
+						const dice: string = target.dice.value || "";
+						const modifier: string = target.modifier.value || "";
+						const total: string = target["best-of"].value || "All Dice";
+						console.log(dice, modifier, total);
 
-				let nIntervalId: number | undefined;
-
-				if (!nIntervalId) {
-					nIntervalId = setInterval(changeDieFace, 100);
-				}
-
-				setTimeout(() => {
-					clearInterval(nIntervalId);
-				}, 1000);
-			},
-			false
-		);
+						if (dice) {
+							this.dice = dice.split(",");
+							this.modifier = modifier ? Number(modifier) : 0;
+							this.total = total;
+							this.render();
+							this.rollAnimation();
+							this.addEventListeners();
+						}
+					}
+				},
+				false
+			);
+		}
 	}
 
 	public attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -131,13 +184,17 @@ export default class DiceRoller extends HTMLElement {
 
 	private render() {
 		const modifier: string = this.modifier > 0 ? "+" + this.modifier.toString() : this.modifier < 0 ? this.modifier.toString() : "";
-		const bestOf: string = this.bestOf < this.dieRolls.length ? `best of ${this.bestOf}` : "";
 		const css = `
         <style>
+            :host {
+                margin: 1rem 0;
+                display: block;
+            }
             .dice {
                 display: flex;
                 gap: .8rem;
                 flex-wrap: wrap;
+                width: fit-content;
             }
             .die {
                 width: 5rem;
@@ -181,15 +238,51 @@ export default class DiceRoller extends HTMLElement {
                 display: flex;
                 gap: .4rem;
             }
+            form {
+                margin-bottom: 1rem;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            #modifier {
+                width: 2rem;
+            }
         </style>
         `;
 
+		let selectArray = ["All Dice", "Highest Die", "Two Highest Dice", "Lowest Die"];
+		let selectOptions = "";
+		selectArray.forEach((item) => {
+			if (item === this.total) {
+				selectOptions += `<option value="${item}" selected>${item}</option>`;
+			} else {
+				selectOptions += `<option value="${item}">${item}</option>`;
+			}
+		});
+
 		let html = `
         <div>
-            <h3><span>Dice: ${this.dice}</span> <span>${modifier}</span> <em>${bestOf}</em></h3>
+            <h3>${this.dice} ${modifier} ${this.total}</h3>
+            <form>
+                <div>
+                    <label for="dice">Dice:</label>
+                    <input id="dice" type="text" name="dice" value="${this.dice}">
+                </div>
+                <div>
+                    <label for="modifier">Modifier:</label>
+                    <input id="modifier" type="text" name="modifier" value="${this.modifier}">
+                </div>
+                <div>
+                    <label for="best-of">Total:</label>
+                    <select id="best-of" name="best-of">
+                        ${selectOptions}
+                    </select>
+                </div>
+                <button type="submit">Roll Dice</button>
+            </form>
             <div class="dice">
                 ${this.dieRolls.map((roll) => `<div class="die">${roll}</div>`).join("")} \
-                <div class="total"><h4>TOTAL</h4><span>${this.total}</span></div>
+                <div class="total"><h4>TOTAL</h4><span>${this.finalTotal}</span></div>
             </div>
         </div>
         `;

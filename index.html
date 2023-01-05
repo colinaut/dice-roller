@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="style.css" />
 		<!-- <script src="/script.js"></script> -->
-		<title>Theme Multi Switch Web Component</title>
+		<title>Dice Roller Web Component</title>
 		<meta name="theme-color" content="#000" />
 		<script type="module" src="/src/main.ts"></script>
 	</head>
@@ -22,9 +22,10 @@
 			<section class="content">
 				<h2>Examples</h2>
 				<dice-roller></dice-roller>
-				<dice-roller dice="6,6,6"></dice-roller>
+				<h3>Blades in the Dark</h3>
+				<dice-roller dice="6,6,6" total="Highest Die"></dice-roller>
 				<h3>Agon</h3>
-				<dice-roller dice="10,10,8,6,6" bestOf="2"></dice-roller>
+				<dice-roller dice="10,10,8,6,6" total="Two Highest Dice"></dice-roller>
 				<h3>Apocalypse World</h3>
 				<dice-roller dice="6,6" modifier="2"></dice-roller>
 				<dice-roller dice="6,6" modifier="-1"></dice-roller>
