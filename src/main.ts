@@ -36,6 +36,14 @@ export default class DiceRoller extends HTMLElement {
 		this.setAttribute("dice", diceArray.toString());
 	}
 
+	get bonusDie(): number {
+		const bonusDie = this.getAttribute("bonus-die") || 0;
+		return Number(bonusDie);
+	}
+	set bonusDie(bonusDie) {
+		this.setAttribute("bonus-die", bonusDie.toString());
+	}
+
 	get modifier(): number {
 		const modifier = this.getAttribute("modifier") || 0;
 		return Number(modifier);
@@ -158,12 +166,14 @@ export default class DiceRoller extends HTMLElement {
 					if (target) {
 						const dice: string = target.dice.value || "";
 						const modifier: string = target.modifier.value || "";
+						const bonusDie: string = target["bonus-die"].value || "";
 						const total: string = target["best-of"].value || "All Dice";
 						console.log(dice, modifier, total);
 
 						if (dice) {
 							this.dice = dice.split(",");
 							this.modifier = modifier ? Number(modifier) : 0;
+							this.bonusDie = bonusDie ? Number(bonusDie) : 0;
 							this.total = total;
 							this.render();
 							this.rollAnimation();
@@ -206,6 +216,21 @@ export default class DiceRoller extends HTMLElement {
                 justify-content: center;
                 font-size: 3rem;
             }
+            .bonus {
+                background: #ffffff22;
+            }
+            .modifier {
+                width: 2rem;
+                height: 5rem;
+                display: flex;
+                font-size: 2rem;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+            }
+            .modifier:empty {
+                display: none;
+            }
             .total {
                 width: 5rem;
                 height: 5rem;
@@ -242,9 +267,12 @@ export default class DiceRoller extends HTMLElement {
                 margin-bottom: 1rem;
                 display: flex;
                 flex-wrap: wrap;
-                gap: 1rem;
+                gap: .8rem;
             }
-            #modifier {
+            input {
+                max-width: 6rem;
+            }
+            #modifier, #bonus-die {
                 width: 2rem;
             }
         </style>
@@ -260,6 +288,12 @@ export default class DiceRoller extends HTMLElement {
 			}
 		});
 
+		let bonusDie = "";
+
+		if (this.bonusDie > 0) {
+			bonusDie = `<div class="die bonus">${this.bonusDie}</div>`;
+		}
+
 		let html = `
         <div>
             <h3>${this.dice} ${modifier} ${this.total}</h3>
@@ -270,7 +304,11 @@ export default class DiceRoller extends HTMLElement {
                 </div>
                 <div>
                     <label for="modifier">Modifier:</label>
-                    <input id="modifier" type="text" name="modifier" value="${this.modifier}">
+                    <input id="modifier" type="number" name="modifier" value="${this.modifier}">
+                </div>
+                <div>
+                    <label for="bonus-die">Bonus Die:</label>
+                    <input id="bonus-die" type="number" name="bonus-die" value="${this.bonusDie}">
                 </div>
                 <div>
                     <label for="best-of">Total:</label>
@@ -281,7 +319,9 @@ export default class DiceRoller extends HTMLElement {
                 <button type="submit">Roll Dice</button>
             </form>
             <div class="dice">
-                ${this.dieRolls.map((roll) => `<div class="die">${roll}</div>`).join("")} \
+                ${this.dieRolls.map((roll) => `<div class="die">${roll}</div>`).join("")}
+                <div class="modifier">${modifier}</div>
+                ${bonusDie}
                 <div class="total"><h4>TOTAL</h4><span>${this.finalTotal}</span></div>
             </div>
         </div>

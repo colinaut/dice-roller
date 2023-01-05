@@ -11,3 +11,4 @@
 - [ ] add svg for dice shape to match different polyhedrons
 - [ ] highlight the highest dice when BestOf is set
 - [ ] Add die roll history
+- [ ] Add Bonus die for Agon

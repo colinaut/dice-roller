@@ -35,12 +35,12 @@ main {
 header,
 section {
 	min-width: 320px;
-	max-width: 70ch;
+	max-width: 80ch;
 	margin: 0 auto;
 	padding: 0.1rem 2rem;
 }
 .content {
-	max-width: 70ch;
+	max-width: 80ch;
 }
 .content-wide {
 	max-width: 120ch;
