@@ -44,7 +44,8 @@ export default class DiceRoller extends HTMLElement {
 
 	private dieRolls: number[] = [];
 	private bonusDieRoll: number = 0;
-	private finalTotal: number = 0;
+	private finalTotal: number | undefined = undefined;
+	private success: boolean = false;
 
 	public connectedCallback(): void {
 		this.render();
@@ -60,6 +61,9 @@ export default class DiceRoller extends HTMLElement {
 		this.dice.forEach((die, i) => {
 			this.dieRolls[i] = this.rollDie(Number(die));
 		});
+	}
+
+	private sumTotal(): number {
 		let total: number;
 		if (this.total === "highest") {
 			total = this.maxDie();
@@ -83,6 +87,7 @@ export default class DiceRoller extends HTMLElement {
 			total += this.bonusDieRoll;
 		}
 		this.finalTotal = total + this.modifier;
+		return this.finalTotal;
 	}
 
 	private maxDie(): number {
@@ -132,23 +137,24 @@ export default class DiceRoller extends HTMLElement {
 
 		setTimeout(() => {
 			clearInterval(nIntervalId);
-			this.addEventListeners();
+			this.sumTotal();
+			this.render();
 		}, 1000);
 	}
 
 	private addEventListeners(): void {
-		const diceEl = this.shadow;
-		if (diceEl) {
-			diceEl.addEventListener(
-				"click",
-				() => {
-					// console.log(event);
+		const shadow = this.shadow;
+		shadow.addEventListener(
+			"click",
+			() => {
+				console.log("roll");
 
-					this.rollAnimation();
-				},
-				false
-			);
-		}
+				this.finalTotal = undefined;
+				this.render();
+				this.rollAnimation();
+			},
+			false
+		);
 	}
 
 	public attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -160,6 +166,7 @@ export default class DiceRoller extends HTMLElement {
 		const bonusDieText: string = this.bonusDie > 0 ? `+ bonus ${this.bonusDie}d` : "";
 		const title = this.title || `${this.dice} ${this.total} ${modifier} ${bonusDieText}`;
 		const size = this.size;
+		const finalTotal = this.finalTotal !== undefined ? `<div class="total"><h5>TOTAL</h5><span>${this.finalTotal}</span></div>` : "";
 		const css = `
         <style>
             :host {
@@ -247,7 +254,7 @@ export default class DiceRoller extends HTMLElement {
 					.join("")}
                 <div class="modifier">${modifier}</div>
                 ${bonusDie}
-                <div class="total"><h5>TOTAL</h5><span>${this.finalTotal}</span></div>
+                ${finalTotal}
             </div>
         </div>
         `;

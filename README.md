@@ -17,3 +17,4 @@
 - [ ] Add clear total function with delay
 - [ ] Add custom event handlers for roll and clearing totals
 - [ ] Add difficulty check
+- [ ] Add way to remove header
