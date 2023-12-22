@@ -95,7 +95,7 @@ export default class DiceRoller extends HTMLElement {
 		}
 		this.finalTotal = total + this.modifier;
 		if (this.difficulty > 0) {
-			this.success = total >= this.difficulty;
+			this.success = this.finalTotal >= this.difficulty;
 		}
 		return this.finalTotal;
 	}
